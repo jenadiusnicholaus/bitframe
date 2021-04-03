@@ -5,6 +5,8 @@ from django.contrib import admin
 from django.urls import path, include
 
 from rest_framework.routers import DefaultRouter
+from rest_framework_jwt.views import obtain_jwt_token
+
 from products.views import ProductListView
 from frame.views import FrameListView, GetFrameByAuthView
 
@@ -21,6 +23,7 @@ urlpatterns = [
     path('user_auth/', include('authentication.urls')),
     path('product/', include('products.urls')),
     path('frame/',  include('frame.urls')),
+    path('api-token-auth/', obtain_jwt_token),
     path('user/password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
 
     # base for future use
