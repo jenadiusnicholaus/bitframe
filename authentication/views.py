@@ -1,6 +1,8 @@
-
+from django.contrib.sites.shortcuts import get_current_site
 from rest_framework import status, generics, permissions, viewsets
 from rest_framework_simplejwt.authentication import JWTAuthentication
+
+from enterapi.settings import SIMPLE_JWT
 from .serializers import SignUpSerializer, ProfileSerializer, ChangePasswordSerializer
 from .models import User, UserProfile
 from rest_framework import status
@@ -61,11 +63,12 @@ class SignIn(generics.RetrieveAPIView):
                 'status code': status_code,
                 'message': 'User logged in  successfully',
                 'token': serializer.data['token'],
-                # 'exp': str(exp),
+                'exp': SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'],
                 'user': {
                     'id': str(user.id),
                     'username': str(user.username),
-                    'email': str(user.email)
+                    'email': str(user.email),
+
                 }
             }
 
@@ -88,19 +91,23 @@ class UserProfileView(generics.RetrieveAPIView):
         try:
 
             user_profile = UserProfile.objects.get(user=request.user)
+
+            serializer = ProfileSerializer(user_profile, )
+            current_site = get_current_site(request)
             status_code = status.HTTP_200_OK
             response = {
                 'success': True,
                 'status_code': status_code,
                 'message': 'User profile fetched successfully',
-                'data': {
-                    'first_name': user_profile.first_name,
-                    'last_name': user_profile.last_name,
-                    'phone_number': user_profile.phone_number,
-                    'age': user_profile.age,
-                    'gender': user_profile.gender,
-                    'image': user_profile.get_imag_url
-                }
+                'data': serializer.data
+                # 'data': {
+                #     'first_name': user_profile.first_name,
+                #     'last_name': user_profile.last_name,
+                #     'phone_number': user_profile.phone_number,
+                #     'age': user_profile.age,
+                #     'gender': user_profile.gender,
+                #     'image': f'{user_profile.get_imag_url}'
+                # }
             }
 
         except Exception as e:
@@ -150,8 +157,3 @@ class ChangePasswordView(generics.UpdateAPIView):
             return Response(response)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-

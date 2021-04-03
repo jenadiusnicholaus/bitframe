@@ -18,6 +18,8 @@ from rest_framework import serializers
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    image_url = serializers.ImageField(max_length=300, use_url=True, allow_null=True, required=False)
+
     class Meta:
         model = UserProfile
         # fields = '__all__'
