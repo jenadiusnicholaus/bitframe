@@ -82,3 +82,7 @@ class ChangePasswordSerializer(serializers.Serializer):
     """ serializer for  password change"""
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
+
+
+
+    """mkvirtualenv --python=python3.7 bitframeevn"""

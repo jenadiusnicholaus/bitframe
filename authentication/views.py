@@ -52,6 +52,7 @@ class SignUp(generics.GenericAPIView):
 
 
 class SignIn(generics.RetrieveAPIView):
+    queryset = User.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = UserSignInSerializer
 
@@ -141,7 +142,7 @@ class ChangePasswordView(generics.UpdateAPIView):
 
         if serializer.is_valid():
             """ 
-            We need to check the old password if it
+            We need to check the old password if it vs
                the same as the user entered
             """
             if not self.object.check_password(serializer.data.get("old_password")):
