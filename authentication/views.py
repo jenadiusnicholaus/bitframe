@@ -1,20 +1,9 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Dec  6 14:04:16 2019
-@jenadius
-"""
-import datetime
 
-from django.contrib.auth import login
 from rest_framework import status, generics, permissions, viewsets
-from rest_framework.viewsets import ViewSet
-from rest_framework_jwt.authentication import JSONWebTokenAuthentication
-from rest_framework_jwt.settings import api_settings
-
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from .serializers import SignUpSerializer, ProfileSerializer, ChangePasswordSerializer
 from .models import User, UserProfile
 from rest_framework import status
-
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializers import UserSignInSerializer
@@ -64,7 +53,7 @@ class SignIn(generics.RetrieveAPIView):
             status_code = status.HTTP_200_OK
             user = User.objects.get(email=serializer.data['email'])
             print(serializer.data)
-            exp = datetime.datetime.utcnow() + api_settings.JWT_EXPIRATION_DELTA
+            # exp = datetime.datetime.utcnow() +
 
             # login(request, request.data['email'], request.data['password'] )
             response = {
@@ -72,7 +61,7 @@ class SignIn(generics.RetrieveAPIView):
                 'status code': status_code,
                 'message': 'User logged in  successfully',
                 'token': serializer.data['token'],
-                'exp': str(exp),
+                # 'exp': str(exp),
                 'user': {
                     'id': str(user.id),
                     'username': str(user.username),
@@ -93,7 +82,7 @@ class SignIn(generics.RetrieveAPIView):
 
 class UserProfileView(generics.RetrieveAPIView):
     permission_classes = (IsAuthenticated,)
-    authentication_class = JSONWebTokenAuthentication
+    authentication_class = JWTAuthentication
 
     def get(self, request, *args, **kwargs):
         try:
@@ -130,7 +119,7 @@ class ChangePasswordView(generics.UpdateAPIView):
     serializer_class = ChangePasswordSerializer
     model = User
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_class = JSONWebTokenAuthentication
+    authentication_class = JWTAuthentication
 
     def get_object(self):
         obj = self.request.user
@@ -161,6 +150,8 @@ class ChangePasswordView(generics.UpdateAPIView):
             return Response(response)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 

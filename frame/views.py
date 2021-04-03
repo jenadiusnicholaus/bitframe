@@ -1,16 +1,11 @@
-from itertools import count
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count
-from django.http import Http404
 from rest_framework import generics, permissions, status, viewsets, mixins
 from rest_framework.generics import ListAPIView
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from frame.models import Frame
 from frame.serializers import FrameSerializers, FrameByAuthSerializer
-from products.models import Product
 
 
 class FrameListView(viewsets.ReadOnlyModelViewSet):
@@ -28,7 +23,7 @@ class RegisterFrame(generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     http_method_names = ['get', 'head', 'post', ]
     serializer_class = FrameSerializers
-    authentication_class = JSONWebTokenAuthentication
+    authentication_class = JWTAuthentication
 
     def perform_create(self, serializer):
         serializer.validated_data['owner'] = self.request.user
@@ -40,7 +35,7 @@ class GetFrameByAuthView(viewsets.ModelViewSet):
     model = Frame
     serializer_class = FrameByAuthSerializer
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_class = JSONWebTokenAuthentication
+    authentication_class = JWTAuthentication
 
     def get_queryset(self):
 

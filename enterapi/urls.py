@@ -3,9 +3,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-
 from rest_framework.routers import DefaultRouter
-from rest_framework_jwt.views import obtain_jwt_token
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
 
 from products.views import ProductListView
 from frame.views import FrameListView, GetFrameByAuthView
@@ -23,7 +26,8 @@ urlpatterns = [
     path('user_auth/', include('authentication.urls')),
     path('product/', include('products.urls')),
     path('frame/',  include('frame.urls')),
-    path('api-token-auth/', obtain_jwt_token),
+    path('api/login_and_getToken/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('user/password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
 
     # base for future use

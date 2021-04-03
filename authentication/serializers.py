@@ -9,15 +9,12 @@ https://pypi.org/project/django-rest-passwordreset/
 import datetime
 from abc import ABC
 
+from rest_framework_simplejwt.tokens import RefreshToken
+
 from .models import User, UserProfile
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import update_last_login
 from rest_framework import serializers
-from rest_framework_jwt.settings import api_settings
-
-JWT_PAYLOAD_HANDLER = api_settings.JWT_PAYLOAD_HANDLER
-JWT_ENCODE_HANDLER = api_settings.JWT_ENCODE_HANDLER
-JWT_EXPIRATION_DELTA = api_settings.JWT_EXPIRATION_DELTA
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -58,13 +55,12 @@ class UserSignInSerializer(serializers.Serializer):
                 'A user with this email and password is not found.'
             )
         try:
-            payload = JWT_PAYLOAD_HANDLER(user)
-            jwt_token = JWT_ENCODE_HANDLER(payload)
-            expiry = datetime.datetime.utcnow() + JWT_EXPIRATION_DELTA
+            refresh = RefreshToken.for_user(user)
+            jwt_token = refresh.access_token
+            # expiry = datetime.datetime.utcnow() + JWT_EXPIRATION_DELTA
 
             update_last_login(None, user)
 
-            print(update_last_login(None, user))
         except User.DoesNotExist:
             raise serializers.ValidationError(
                 'User with given email and password does not exists'
@@ -79,10 +75,5 @@ class UserSignInSerializer(serializers.Serializer):
 
 
 class ChangePasswordSerializer(serializers.Serializer):
-    """ serializer for  password change"""
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
-
-
-
-    """mkvirtualenv --python=python3.7 bitframeevn"""
