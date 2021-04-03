@@ -23,7 +23,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         # fields = '__all__'
-        fields = ('id', 'phone_number', "age", "gender", 'image_url')
+        fields = ('id', "first_name", 'last_name', 'phone_number', "age", "gender", 'image_url')
 
 
 class SignUpSerializer(serializers.ModelSerializer):
