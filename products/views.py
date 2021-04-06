@@ -5,8 +5,8 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from frame.models import Frame
-from products.models import Product
-from .serializer import ProductSerializer, FrameSerializer
+from products.models import Product, Categories
+from .serializer import ProductSerializer, FrameSerializer, ProductCategoriesSerializer
 
 
 class ProductListView(viewsets.ModelViewSet):
@@ -19,12 +19,10 @@ class ProductListView(viewsets.ModelViewSet):
         return qs
 
 
-class ProductFrame():
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    permission_classes = [permissions.AllowAny, ]
+class ProductCategories(viewsets.ModelViewSet):
+    queryset = Categories.objects.filter()
+    serializer_class = ProductCategoriesSerializer
+    permission_classes = [permissions.AllowAny,]
 
-    def get_queryset(self):
-        qs = Product.objects.filter().order_by('-created_by')
-        return qs
+
 

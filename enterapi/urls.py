@@ -10,14 +10,14 @@ from rest_framework_simplejwt.views import (
 )
 
 
-from products.views import ProductListView
+from products.views import ProductListView, ProductCategories
 from frame.views import FrameListView, GetFrameByAuthView
 
 router = DefaultRouter()
 router.register(r'framesList', FrameListView, basename='profile')
 router.register(r'frame_by_auth', GetFrameByAuthView, basename='frame_by_auth')
 router.register(r'products', ProductListView, basename='products')
-# router.register(r'prodcut_frame', frameViewSet, basename='product_frame')
+router.register(r'product_categories', ProductCategories, basename='product_categories')
 
 
 urlpatterns = [
