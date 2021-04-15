@@ -1,3 +1,9 @@
+from rest_framework_simplejwt.tokens import RefreshToken
+from .models import User, UserProfile
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import update_last_login
+from rest_framework import serializers
+
 # Helper link
 """
  JwtEg: https://medium.com/analytics-vidhya/django-rest-api-with-json-web-token-jwt-authentication-69536c01ee18
@@ -5,16 +11,10 @@
 JWPpage: https://styria-digital.github.io/django-rest-framework-jwt/
 https://pypi.org/project/django-rest-passwordreset/
 """
-
-import datetime
-from abc import ABC
-
-from rest_framework_simplejwt.tokens import RefreshToken
-
-from .models import User, UserProfile
-from django.contrib.auth import authenticate
-from django.contrib.auth.models import update_last_login
-from rest_framework import serializers
+# +++++++++++++++++++++++++++++chat application++++++++++++++++++++++++++++
+"""
+https://steemit.com/utopian-io/@ajmaln/part-2-simple-chat-application-using-djangorestframework
+"""
 
 
 class ProfileSerializer(serializers.ModelSerializer):
