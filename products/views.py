@@ -5,7 +5,6 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
 from frame.models import Frame
 from products.models import Product, Categories, Orders, OrderedProducts
 from .serializer import ProductSerializer, FrameSerializer, ProductCategoriesSerializer, OrderSerializer
@@ -33,8 +32,25 @@ class AddToShoppingCartView(APIView):
 
     def get(self, request, *args, **kwargs):
         order = Orders.objects.filter(customer=request.user, isPaid=False)
+        order_list = []
+        if order.exists():
+            myOrder = order[0]
+            for product in myOrder.products.all():
+                orderItems = {
+                    'order_id': product.id,
+                    'product_id': product.product.id,
+                    'product_name': product.product.name,
+                    'quantity': product.quantity,
+                    'image': str(product.product.image),
+                }
+                order_list.append(orderItems)
+        else:
+            order_list = []
+
+        print(order_list)
+
         serializer = OrderSerializer(order, many=True)
-        return Response(serializer.data)
+        return Response(order_list)
 
     def post(self, request, pk, *args, **kwargs):
         product_obj = get_object_or_404(Product, pk=pk)

@@ -60,6 +60,7 @@ class OrderedProducts(models.Model):
     created_at = models.DateTimeField(default=timezone.now, null=True)
     isPaid = models.BooleanField(default=False)
     updated_at = models.DateTimeField(default=timezone.now, null=True)
+    quantity = models.IntegerField(default=1)
 
     class Meta:
         verbose_name_plural = 'Ordered products'
@@ -75,7 +76,7 @@ class Orders(models.Model):
     created_at = models.DateTimeField(default=timezone.now, null=True)
     isPaid = models.BooleanField(default=False)
     updated_at = models.DateTimeField(default=timezone.now, null=True)
-    quantity = models.IntegerField(default=1)
+
 
     class Meta:
         verbose_name_plural = 'Orders'
