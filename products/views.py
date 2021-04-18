@@ -1,3 +1,4 @@
+from django.db.models import Count
 from rest_framework import viewsets, response, status
 from rest_framework import permissions
 from rest_framework.decorators import action, api_view
@@ -35,21 +36,25 @@ class AddToShoppingCartView(APIView):
         order_list = []
         if order.exists():
             myOrder = order[0]
+
             for product in myOrder.products.all():
                 orderItems = {
                     'order_id': product.id,
                     'product_id': product.product.id,
                     'product_name': product.product.name,
                     'quantity': product.quantity,
-                    'image': str(product.product.image),
+                    'image': str(product.product.get_image_url),
+                    'price': product.product.price,
+                    'total': str(myOrder.total_price()),
+                    'total_order': myOrder.orderCounter()
+
                 }
+
                 order_list.append(orderItems)
+                # order_list.append(total)
         else:
             order_list = []
 
-        print(order_list)
-
-        serializer = OrderSerializer(order, many=True)
         return Response(order_list)
 
     def post(self, request, pk, *args, **kwargs):
@@ -60,8 +65,8 @@ class AddToShoppingCartView(APIView):
         if order_qs.exists():
             order = order_qs[0]
             if order.products.filter(product__pk=product_obj.pk).exists():
-                order.quantity += 1
-                order.save()
+                ordered_product.quantity += 1
+                ordered_product.save()
                 return Response({'message': 'Order updated'})
             else:
                 order.products.add(ordered_product)
@@ -70,3 +75,11 @@ class AddToShoppingCartView(APIView):
             order = Orders.objects.create(customer=request.user, )
             order.products.add(ordered_product)
             return Response({'message': ' Order created'})
+
+
+class PostProduct(APIView):
+    def get(self, *args, **kwargs):
+        pass
+
+    def post(self, pk, *args, **kwargs, ):
+        pass

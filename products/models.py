@@ -32,7 +32,7 @@ class Product(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=12, null=True)
     image = models.ImageField(upload_to='product_images', null=True)
-    price = models.IntegerField()
+    price = models.IntegerField(default=0)
     description = models.TextField(null=True)
     created_at = models.DateTimeField(default=timezone.now, null=True)
 
@@ -45,6 +45,7 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    @property
     def get_image_url(self):
         try:
             if self.image and hasattr(self.image, 'url'):
@@ -68,6 +69,13 @@ class OrderedProducts(models.Model):
     def __str__(self):
         return self.product.name
 
+    def get_individual_total(self):
+        try:
+            ind_total = self.product.price * self.quantity
+            return ind_total
+        except:
+            return None
+
 
 class Orders(models.Model):
     products = models.ManyToManyField(OrderedProducts, )
@@ -77,9 +85,24 @@ class Orders(models.Model):
     isPaid = models.BooleanField(default=False)
     updated_at = models.DateTimeField(default=timezone.now, null=True)
 
-
     class Meta:
         verbose_name_plural = 'Orders'
 
     def __str__(self):
         return self.customer.email
+
+    def total_price(self):
+        try:
+
+            total = sum(ind_total.get_individual_total() for ind_total in self.products.all())
+            print(total)
+
+            return total
+        except ValueError:
+            return None
+
+    def orderCounter(self):
+
+        order_total = self.products.count()
+
+        return order_total
